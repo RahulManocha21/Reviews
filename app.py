@@ -2,14 +2,23 @@ import streamlit as st  # Importing the Streamlit library to create a web app
 import pandas as pd  # Importing the Pandas library to handle data manipulation and analysis
 import numpy as np  # Importing the Numpy library for numerical computations
 from datetime import date  # Importing the date class from the datetime module for date manipulation
-
+from matplotlib import pyplot as plt
 # Load the CSV file
 # Define a function to load the data
+def extract_category(row):
+    row = row.replace("-Catalog", "").strip()
+    row = row.replace("-E-Collections", "").strip()
+    row = row.replace("-Solo", "").strip()
+    row = row.replace("- CATALOG", "").strip()
+    row = row.replace("-CATALOG", "").strip()
+    row = row.replace("- OTHER", "").strip()
+    return row
+
 @st.cache_data  # Decorator to cache data for faster loading
 def load_data():
     df = pd.read_csv('Reviews.csv')  # Load the CSV file named 'Reviews.csv'
     df = df.drop(columns=[  # Drop unnecessary columns from the DataFrame
-        'SKU',
+        'Date',
         'Review Bottomline',
         'Review Location',
         'Review Location',
@@ -22,8 +31,8 @@ def load_data():
         'Review Nickname',
         'UGC ID'
     ])
-    df['Date'] = pd.to_datetime(df['Date']).dt.date  # Convert the 'Date' column to a datetime format
     df['Created Date'] = pd.to_datetime(df['Created Date']).dt.date  # Convert the 'Created Date' column to a datetime format
+    df['Category'] = df['PGC_Desc'].apply(extract_category)
     return df
 
 
@@ -32,6 +41,7 @@ if __name__ == "__main__":  # Main execution block
                         layout="wide",
                         page_title='Review System App',
                         page_icon='⭐')
+    
     st.markdown(
         """
         <h1 style='text-align: center; '>Reviews Analysing System</h1>
@@ -39,29 +49,29 @@ if __name__ == "__main__":  # Main execution block
         unsafe_allow_html=True)
     df = load_data()  # Load the data
     # st.subheader('Actual DataFrame')
-    # st.dataframe(df, hide_index=True)
+    # st.dataframe(df,column_order=['PGC_Desc','Category'], hide_index=True)
     # Sidebar filters
     st.markdown("""<h3 style='text-align: center;'>Filters</h3>""", unsafe_allow_html=True)
     col1, col2, col3, col4, col5, col6 = st.columns(6)
     with col1:
-        start_date = st.date_input("Start date", value= df['Date'].min() , min_value=df['Date'].min(), max_value=date.today())
+        start_date = st.date_input("Start date", value= df['Created Date'].min() , min_value=df['Created Date'].min(), max_value=date.today())
     with col2:
-        end_date = st.date_input("End date",value=df['Date'].max(),min_value=df['Date'].min(), max_value=df['Date'].max())
-        filtered_df = df[(df['Date'] >= start_date) &  (df['Date'] <= end_date)]
+        end_date = st.date_input("End date",value=df['Created Date'].max(),min_value=df['Created Date'].min(), max_value=df['Created Date'].max())
+        filtered_df = df[(df['Created Date'] >= start_date) &  (df['Created Date'] <= end_date)]
         available_products = filtered_df['Product Name'].unique()
-        available_pgc = filtered_df['PGC_Desc'].unique()
+        available_pgc = filtered_df['Category'].unique()
         available_rating = filtered_df['Review Rating'].unique()
     with col3:            
         selected_brands = st.multiselect("Brand", filtered_df['Brand Name'].unique())
         if selected_brands:
             filtered_df = filtered_df[filtered_df['Brand Name'].isin(selected_brands)]
-            available_pgc = filtered_df['PGC_Desc'].unique()
+            available_pgc = filtered_df['Category'].unique()
             available_products = filtered_df['Product Name'].unique()
             available_ratings = filtered_df['Review Rating'].unique()
     with col4:
         selected_pgc_descriptions = st.multiselect("PGC Category", available_pgc)
         if selected_pgc_descriptions:
-            filtered_df = filtered_df[filtered_df['PGC_Desc'].isin(selected_pgc_descriptions)]
+            filtered_df = filtered_df[filtered_df['Category'].isin(selected_pgc_descriptions)]
             available_products = filtered_df['Product Name'].unique()
             available_ratings = filtered_df['Review Rating'].unique()
     with col5:
@@ -106,28 +116,31 @@ if __name__ == "__main__":  # Main execution block
     with data:
         filtered_df['Created Date'] = pd.to_datetime(filtered_df['Created Date'])
         filtered_df['Created Year'] = filtered_df['Created Date'].dt.year
-        avg_rating_df = filtered_df.groupby(['Brand Name', 'PGC_Desc',  'Created Year'])['Review Rating'].mean().reset_index()
+        avg_rating_df = filtered_df.groupby(['Brand Name', 'Category',  'Created Year'])['Review Rating'].mean().reset_index()
         avg_rating_df['Review Rating'] = np.round(avg_rating_df['Review Rating'], 2)
         avg_rating_df = avg_rating_df.sort_values(by='Created Year', ascending=False)
         pro_avg_rating_df = filtered_df.groupby(['Brand Name', 'Product Name', 'Created Year'])['Review Rating'].mean().reset_index()
         pro_avg_rating_df['Review Rating'] = np.round(pro_avg_rating_df['Review Rating'], 2)
         pro_avg_rating_df = pro_avg_rating_df.sort_values(by='Created Year', ascending=False)
-        st.subheader('Average Rating by PGC Desc and Created Year')
+        st.subheader('Average Rating by PGC Desc and Year')
         st.dataframe(avg_rating_df, hide_index=True,height=350, width=1500)
         st.markdown("***")
-        st.subheader('Average Rating by Product Name and Created Year')    
+        st.subheader('Average Rating by Product and Year')    
         st.dataframe(pro_avg_rating_df,hide_index=True, height=350, width=1500)
+
+
         
     with graph:
         st.subheader('Visualization')
-        st.bar_chart(avg_rating_df, x= "Created Year", y ="Review Rating",color='PGC_Desc' )
+        st.bar_chart(avg_rating_df, x= "Created Year", y ="Review Rating",color='Category' )
         st.markdown("***")
         st.subheader('Visualization')    
         st.bar_chart(pro_avg_rating_df,x='Created Year', y='Review Rating', color='Product Name')
+    
         
     st.markdown("***")
 
     st.subheader('Read Reviews')
-    st.dataframe(filtered_df[['Brand Name','Product Name','Review Rating','Review Headline','Review Comments']],
+    st.dataframe(filtered_df[['Brand Name','SKU','Product Name','Review Rating','Review Headline','Review Comments']],
                  width=1500, hide_index=True)
     
