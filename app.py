@@ -19,6 +19,7 @@ def load_data():
     df = pd.read_csv('Reviews.csv')  # Load the CSV file named 'Reviews.csv'
     df = df.drop(columns=[  # Drop unnecessary columns from the DataFrame
         'Date',
+        'SKU',
         'Review Bottomline',
         'Review Location',
         'Review Location',
@@ -141,6 +142,6 @@ if __name__ == "__main__":  # Main execution block
     st.markdown("***")
 
     st.subheader('Read Reviews')
-    st.dataframe(filtered_df[['Brand Name','SKU','Product Name','Review Rating','Review Headline','Review Comments']],
+    st.dataframe(filtered_df[['Brand Name','Page ID','Product Name','Review Rating','Review Headline','Review Comments']],
                  width=1500, hide_index=True)
     
