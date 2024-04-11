@@ -41,7 +41,7 @@ if __name__ == "__main__":  # Main execution block
     st.set_page_config(  # Set the layout of the web app to wide
                         layout="wide",
                         page_title='Review System App',
-                        page_icon='⭐')
+                        page_icon='⭐', initial_sidebar_state='collapsed')
     try:
         st.markdown(
             """
