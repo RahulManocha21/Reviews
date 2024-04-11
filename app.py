@@ -124,18 +124,31 @@ if __name__ == "__main__":  # Main execution block
             pro_avg_rating_df['Review Rating'] = np.round(pro_avg_rating_df['Review Rating'], 2)
             pro_avg_rating_df = pro_avg_rating_df.sort_values(by='Created Year', ascending=False)
             st.subheader('Average Rating by PGC Desc and Year')
-            st.dataframe(avg_rating_df, hide_index=True,height=350, width=1500, column_config = {"Created Year": 
-            st.column_config.TextColumn()})
+            st.dataframe(avg_rating_df, hide_index=True,height=350, width=1500, 
+                         column_config = {"Created Year": 
+                        st.column_config.TextColumn(), 
+                        "Review Rating": st.column_config.ProgressColumn(
+                        "Review Rating Trend",
+                        format="⭐%f",
+                        min_value=1,
+                        max_value=5,
+                        )})
             st.markdown("***")
             st.subheader('Average Rating by Product and Year')    
             st.dataframe(pro_avg_rating_df,hide_index=True, height=350, width=1500,column_config = {"Created Year": 
-            st.column_config.TextColumn()})
+            st.column_config.TextColumn(),
+            "Review Rating": st.column_config.ProgressColumn(
+                        "Review Rating Trend",
+                        format="⭐%f",
+                        min_value=1,
+                        max_value=5,
+                        )})
 
 
             
         with graph:
             st.subheader('Visualization')
-            st.bar_chart(avg_rating_df, x= "Created Year", y ="Review Rating",color='Category' )
+            st.bar_chart(avg_rating_df, x= "Created Year", y ="Review Rating",color='Category')
             st.markdown("***")
             st.subheader('Visualization')    
             st.bar_chart(pro_avg_rating_df,x='Created Year', y='Review Rating', color='Product Name')
@@ -147,5 +160,6 @@ if __name__ == "__main__":  # Main execution block
         st.dataframe(filtered_df[['Brand Name','Page ID','Product Name','Review Rating','Review Headline','Review Comments']],
                     width=1500, hide_index=True)
         
+      
     except Exception as e:
         print(f"Error occured: {e}")
