@@ -130,7 +130,7 @@ if __name__ == "__main__":  # Main execution block
                         "Review Rating": st.column_config.ProgressColumn(
                         "Review Rating Trend",
                         format="⭐%f",
-                        min_value=1,
+                        min_value=0,
                         max_value=5,
                         )})
             st.markdown("***")
@@ -140,7 +140,7 @@ if __name__ == "__main__":  # Main execution block
             "Review Rating": st.column_config.ProgressColumn(
                         "Review Rating Trend",
                         format="⭐%f",
-                        min_value=1,
+                        min_value=0,
                         max_value=5,
                         )})
 
