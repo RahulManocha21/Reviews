@@ -2,7 +2,7 @@ import streamlit as st  # Importing the Streamlit library to create a web app
 import pandas as pd  # Importing the Pandas library to handle data manipulation and analysis
 import numpy as np  # Importing the Numpy library for numerical computations
 from datetime import date  # Importing the date class from the datetime module for date manipulation
-from matplotlib import pyplot as plt
+
 # Load the CSV file
 # Define a function to load the data
 def extract_category(row):
