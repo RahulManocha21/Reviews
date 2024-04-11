@@ -124,10 +124,12 @@ if __name__ == "__main__":  # Main execution block
             pro_avg_rating_df['Review Rating'] = np.round(pro_avg_rating_df['Review Rating'], 2)
             pro_avg_rating_df = pro_avg_rating_df.sort_values(by='Created Year', ascending=False)
             st.subheader('Average Rating by PGC Desc and Year')
-            st.dataframe(avg_rating_df, hide_index=True,height=350, width=1500)
+            st.dataframe(avg_rating_df, hide_index=True,height=350, width=1500, column_config = {"Created Year": 
+            st.column_config.TextColumn()})
             st.markdown("***")
             st.subheader('Average Rating by Product and Year')    
-            st.dataframe(pro_avg_rating_df,hide_index=True, height=350, width=1500)
+            st.dataframe(pro_avg_rating_df,hide_index=True, height=350, width=1500,column_config = {"Created Year": 
+            st.column_config.TextColumn()})
 
 
             
