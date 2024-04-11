@@ -43,10 +43,13 @@ if __name__ == "__main__":  # Main execution block
                         page_title='Review System App',
                         page_icon='⭐', initial_sidebar_state='collapsed')
     try:
-        st.markdown(
+        image, heading = st.columns([1, 9])
+        image.image('logo.png',width=200)
+        heading.markdown(
             """
-            <h1 style='text-align: center; '>Reviews Analysing System</h1>
-            """,
+            <h1 style='text-align: center; font-size: 80px;'>
+                Reviews Analyzing System
+            </h1>""",
             unsafe_allow_html=True)
         df = load_data()  # Load the data
         # st.subheader('Actual DataFrame')
@@ -130,7 +133,7 @@ if __name__ == "__main__":  # Main execution block
                         "Review Rating": st.column_config.ProgressColumn(
                         "Review Rating Trend",
                         format="⭐%f",
-                        min_value=1,
+                        min_value=0,
                         max_value=5,
                         )})
             st.markdown("***")
@@ -140,7 +143,7 @@ if __name__ == "__main__":  # Main execution block
             "Review Rating": st.column_config.ProgressColumn(
                         "Review Rating Trend",
                         format="⭐%f",
-                        min_value=1,
+                        min_value=0,
                         max_value=5,
                         )})
 
@@ -160,6 +163,7 @@ if __name__ == "__main__":  # Main execution block
         st.dataframe(filtered_df[['Brand Name','Page ID','Product Name','Review Rating','Review Headline','Review Comments']],
                     width=1500, hide_index=True)
         
-      
+                     
+                     
     except Exception as e:
         print(f"Error occured: {e}")
