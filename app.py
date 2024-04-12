@@ -131,7 +131,7 @@ if __name__ == "__main__":  # Main execution block
                          column_config = {"Created Year": 
                         st.column_config.TextColumn(), 
                         "Review Rating": st.column_config.ProgressColumn(
-                        "Review Rating Trend",
+                        "Rating Trend",
                         format="⭐%f",
                         min_value=0,
                         max_value=5,
@@ -141,7 +141,7 @@ if __name__ == "__main__":  # Main execution block
             st.dataframe(pro_avg_rating_df,hide_index=True, height=350, width=1500,column_config = {"Created Year": 
             st.column_config.TextColumn(),
             "Review Rating": st.column_config.ProgressColumn(
-                        "Review Rating Trend",
+                        "Rating Trend",
                         format="⭐%f",
                         min_value=0,
                         max_value=5,
