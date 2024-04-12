@@ -2,6 +2,8 @@ import streamlit as st  # Importing the Streamlit library to create a web app
 import pandas as pd  # Importing the Pandas library to handle data manipulation and analysis
 import numpy as np  # Importing the Numpy library for numerical computations
 from datetime import date  # Importing the date class from the datetime module for date manipulation
+from wordcloud import WordCloud, STOPWORDS
+import matplotlib.pyplot as plt
 
 # Load the CSV file
 # Define a function to load the data
@@ -34,8 +36,17 @@ def load_data():
     ])
     df['Created Date'] = pd.to_datetime(df['Created Date']).dt.date  # Convert the 'Created Date' column to a datetime format
     df['Category'] = df['PGC_Desc'].apply(extract_category)
+    # Download NLTK stopwords data
     return df
 
+def generate_wordcloud(list_of_negative_comments):
+    combined_comments = ' '.join(list_of_negative_comments)
+    wordcloud = WordCloud(width=800, height=400, background_color='white', stopwords=STOPWORDS).generate(combined_comments)
+    plt.figure(figsize=(10, 5))
+    plt.imshow(wordcloud, interpolation='bilinear')
+    plt.axis('off')
+    # plt.show()
+    st.pyplot(plt)
 
 if __name__ == "__main__":  # Main execution block
     st.set_page_config(  # Set the layout of the web app to wide
@@ -158,12 +169,31 @@ if __name__ == "__main__":  # Main execution block
         
             
         st.markdown("***")
+            
+        RH,RC = st.columns(2)
+        with RH:
+            st.subheader('Frequent Words in Reviews Headline(1 ⭐ only)')
+            # Check if NLTK data is already downloaded, if not, download it
+            comments = filtered_df[filtered_df['Review Rating']==1]
+            list_of_negative_comments = []
+            for i in comments['Review Headline']:
+                if isinstance(i, str):
+                    list_of_negative_comments.append(i)
+            generate_wordcloud(list_of_negative_comments)
+        with RC:    
+            st.subheader('Frequent Words in Reviews Comments(1 ⭐ only)')
+            # Check if NLTK data is already downloaded, if not, download it
+            comments = filtered_df[filtered_df['Review Rating']==1]
+            list_of_negative_comments = []
+            for i in comments['Review Comments']:
+                if isinstance(i, str):
+                    list_of_negative_comments.append(i)
+            generate_wordcloud(list_of_negative_comments)
+        st.markdown("***")
 
         st.subheader('Read Reviews')
         st.dataframe(filtered_df[['Brand Name','Page ID','Product Name','Review Rating','Review Headline','Review Comments']],
                     width=1500, hide_index=True)
         
-                     
-                     
     except Exception as e:
         print(f"Error occured: {e}")
