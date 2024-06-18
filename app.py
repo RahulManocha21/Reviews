@@ -59,7 +59,7 @@ if __name__ == "__main__":  # Main execution block
         heading.markdown(
             """
             <h1 style='text-align: center; font-size: 70px;'>
-                Reviews Analyzing System
+                Reviews Analyzer
             </h1>""",
             unsafe_allow_html=True)
         df = load_data()  # Load the data
