@@ -1,6 +1,6 @@
 pandas 
 numpy
 pygwalker
-streamlit
+streamlit==1.34.0
 datetime
 wordcloud
