@@ -108,8 +108,8 @@ if __name__ == "__main__":  # Main execution block
         # five_star_count = 1000
         threshold_count_1star = filtered_df.shape[0] * 0.05
         threshold_count_5star = filtered_df.shape[0] * 0.60
-        one_star_delta = np.round((one_star_count - threshold_count_1star),decimals=2)
-        five_star_delta = np.round((five_star_count - threshold_count_5star),decimals=2)
+        one_star_delta = int(np.round((one_star_count - threshold_count_1star),decimals=0))
+        five_star_delta = int(np.round((five_star_count - threshold_count_5star),decimals=0))
         metric0, metric1, metric2,metric3,metric4 = st.columns([0.4,1,1,1,1])
         metric1.metric("Total number of reviews", len(filtered_df))
         metric2.metric("Average Rating", np.round(filtered_df['Review Rating'].mean(),decimals=2))
