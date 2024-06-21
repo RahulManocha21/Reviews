@@ -4,3 +4,4 @@ pygwalker
 streamlit==1.34.0
 datetime
 wordcloud
+nltk

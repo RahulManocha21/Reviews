@@ -4,6 +4,8 @@ import numpy as np  # Importing the Numpy library for numerical computations
 from datetime import date  # Importing the date class from the datetime module for date manipulation
 from wordcloud import WordCloud, STOPWORDS
 import matplotlib.pyplot as plt
+from nltk.stem.snowball import SnowballStemmer
+from nltk.tokenize import word_tokenize
 
 # Load the CSV file
 # Define a function to load the data
@@ -34,13 +36,22 @@ def load_data():
         'Review Nickname',
         'UGC ID'
     ])
+    df.dropna(axis=0, inplace=True)
     df['Created Date'] = pd.to_datetime(df['Created Date']).dt.date  # Convert the 'Created Date' column to a datetime format
     df['Category'] = df['PGC_Desc'].apply(extract_category)
     # Download NLTK stopwords data
     return df
 
 def generate_wordcloud(list_of_negative_comments):
-    combined_comments = ' '.join(list_of_negative_comments)
+    stemmer = SnowballStemmer("english")
+        # Function to preprocess and stem a single comment
+    def preprocess_and_stem(comment):
+        tokens = word_tokenize(comment)
+        stemmed_tokens = [stemmer.stem(token) for token in tokens]
+        return ' '.join(stemmed_tokens)
+    
+    preprocessed_comments = [preprocess_and_stem(comment) for comment in list_of_negative_comments]
+    combined_comments = ' '.join(preprocessed_comments)
     wordcloud = WordCloud(width=800, height=400, background_color='white', stopwords=STOPWORDS).generate(combined_comments)
     plt.figure(figsize=(10, 5))
     plt.imshow(wordcloud, interpolation='bilinear')
