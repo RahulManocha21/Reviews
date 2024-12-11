@@ -4,6 +4,20 @@ import numpy as np  # Importing the Numpy library for numerical computations
 from datetime import date  # Importing the date class from the datetime module for date manipulation
 from wordcloud import WordCloud, STOPWORDS
 import matplotlib.pyplot as plt
+from nltk.sentiment import SentimentIntensityAnalyzer
+import nltk
+nltk.download('vader_lexicon')  # Download the VADER lexicon
+
+
+
+# Initialize the VADER Sentiment Intensity Analyzer
+sia = SentimentIntensityAnalyzer()
+
+# Define a function to calculate sentiment scores
+def get_polarity_score(text):
+    if isinstance(text, str):  # Check if the input is a string
+        return sia.polarity_scores(text)['compound']  # Extract the compound score
+    return None  # Return None if text is not a string
 
 # Load the CSV file
 # Define a function to load the data
@@ -172,9 +186,11 @@ if __name__ == "__main__":  # Main execution block
         st.markdown("***")
             
         RH,RC = st.columns(2)
+        filtered_df['Polarity Score'] = filtered_df['Review Comments'].apply(get_polarity_score)
         with RH:
             st.subheader('Frequent Words in Reviews Headline(1 ⭐ only)')
             # Check if NLTK data is already downloaded, if not, download it
+            #comments = filtered_df[filtered_df['Polarity Score']<0 and filtered_df['Polarity Score']>=-1]
             comments = filtered_df[filtered_df['Review Rating']==1]
             list_of_negative_comments = []
             for i in comments['Review Headline']:
@@ -185,6 +201,7 @@ if __name__ == "__main__":  # Main execution block
             st.subheader('Frequent Words in Reviews Comments(1 ⭐ only)')
             # Check if NLTK data is already downloaded, if not, download it
             comments = filtered_df[filtered_df['Review Rating']==1]
+            #comments = filtered_df[filtered_df['Polarity Score']<0 and filtered_df['Polarity Score']>=-1]
             list_of_negative_comments = []
             for i in comments['Review Comments']:
                 if isinstance(i, str):
@@ -193,7 +210,7 @@ if __name__ == "__main__":  # Main execution block
         st.markdown("***")
 
         st.subheader('Read Reviews')
-        st.dataframe(filtered_df[['Brand Name','Page ID','Product Name','Review Rating','Review Headline','Review Comments']],
+        st.dataframe(filtered_df[['Brand Name','Page ID','Product Name','Review Rating','Review Headline','Polarity Score','Review Comments']],
                     width=1500, hide_index=True)
         
     except Exception as e:
